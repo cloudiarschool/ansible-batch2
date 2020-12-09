@@ -1,0 +1,33 @@
+---
+- name: This playbook starts, stops and terminates ec2 instances
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+  - name: Start ec2 instance
+    ec2:
+      instance_ids: i-0e8a8e0e72d81e066
+      region: us-east-1
+      state: running
+      wait: yes
+    tags:
+      - start
+
+  - name: Stop ec2 instance
+    ec2:
+      instance_ids: i-0e8a8e0e72d81e066
+      region: us-east-1
+      state: stopped
+      wait: yes
+    tags:
+      - stop
+
+  - name: Terminate ec2 instance
+    ec2:
+      instance_ids: i-0e8a8e0e72d81e066
+      region: us-east-1
+      state: absent
+      wait: yes
+    tags:
+      - terminate

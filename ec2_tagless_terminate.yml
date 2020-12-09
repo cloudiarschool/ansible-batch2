@@ -1,0 +1,21 @@
+---
+- name: This playbook removes tagless instances
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    aws_region: us-east-1
+
+  tasks:
+  - name: Getting info
+    ec2_instance_facts:
+      region: "{{ aws_region }}"
+    register: ec2_info
+
+  - name: Terminate tagless instance
+    ec2:
+      instance_ids: "{{ item.instance_id }}"
+      state: absent
+      region: "{{ aws_region }}"
+    with_items: "{{ ec2_info.instances }}"
+    when: item.tags.keys()|length == 0

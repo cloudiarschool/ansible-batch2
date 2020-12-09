@@ -1,0 +1,66 @@
+---
+- name: Dynamically provision
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars: 
+    aws_region: us-east-1
+
+  tasks:
+  - name: Getting info ec2
+    ec2_instance_facts:
+      region: us-east-1
+      filters:
+        "tag:Env": dev
+    register: env_info
+    tags:
+      - always
+
+  - name: Display output
+    debug:
+      msg: "{{ item.instance_id }}"
+    with_items: "{{ env_info.instances }}"
+
+  - name: starting ec2 instance
+    ec2:
+      instance_ids: "{{ item.instance_id }}"
+      region: "{{ aws_region }}"
+      state: running
+      wait: yes
+    tags:
+      - start
+      - never
+    with_items: "{{ env_info.instances }}"
+ 
+  - name: stopping ec2 instance
+    ec2:
+      instance_ids: "{{ item.instance_id }}"
+      region: "{{ aws_region }}"
+      state: stopped
+      wait: yes
+    tags:
+      - stop
+      - never
+    with_items: "{{ env_info.instances }}"
+
+  - name: terminate ec2 instance
+    ec2:
+      instance_ids: "{{ item.instance_id }}"
+      region: "{{ aws_region }}"
+      state: absent
+      wait: yes
+    tags:
+      - terminate
+      - never
+    with_items: "{{ env_info.instances }}"
+
+
+
+
+
+
+
+
+
+
+

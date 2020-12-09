@@ -1,0 +1,21 @@
+---
+- name: Launching aws ec2 instance
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+  - name: Spin up ec2 instance using Ansible
+    ec2:
+      image: ami-00ddb0e5626798373
+      instance_type: t2.micro
+      key_name: demokey
+      region: us-east-1
+      count: 2
+      wait: yes
+      group_id: 
+        - sg-0aed7636721de0626
+        - sg-0cc32da57c3eaae9a
+      instance_tags:
+        Name: ubuntu
+        Env: dev

@@ -1,0 +1,17 @@
+---
+- name: This playbook is used to fetch instance info
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+  - name: Getting info about EC2 using ec2_instance_facts
+    ec2_instance_facts:
+      region: us-east-1
+      filters:
+        "tag:Name": Info
+    register: ec2_info
+
+  - name: Displaying output
+    debug:
+      msg: "{{ ec2_info }}"
